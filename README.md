@@ -1,4 +1,4 @@
-# my-word2vec Project Progress: Word2Vec from Scratch (Skip-gram + Negative Sampling)**
+# my-word2vec Project Progress: Word2Vec from Scratch (Skip-gram + Negative Sampling)
 
 #### **1. Dataset Preparation**
 
