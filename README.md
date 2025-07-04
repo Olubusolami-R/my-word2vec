@@ -6,7 +6,6 @@ I wanted to really understand how **Word2Vec** works under the hood, so I decide
 
 **Note:** I did all the training on Kaggle using the free GPUs and also got the movie plot dataset from there.
 
----
 
 ## What I Did and Learned
 
@@ -84,7 +83,6 @@ Lately, I’ve been experimenting with:
 
 I’ve been tracking how these changes affect the loss and training behaviour.
 
----
 
 ## Why I’m Sharing This
 
