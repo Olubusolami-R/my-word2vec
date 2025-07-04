@@ -4,6 +4,8 @@
 
 I wanted to really understand how **Word2Vec** works under the hood, so I decided to implement it from scratch using PyTorch. Instead of using standard datasets like Text8, I went with a movie plot dataset because it felt more interesting and unpredictable. The goal here wasn’t just to make it work but to understand every part of the process.
 
+**Note:** I did all the training on Kaggle using the free GPUs and also got the movie plot dataset from there.
+
 ---
 
 ## What I Did and Learned
