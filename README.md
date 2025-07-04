@@ -17,7 +17,7 @@ I combined all the movie plots into one large text. For preprocessing, I:
 * Removed punctuation by keeping only words made up of letters (`.isalpha()`).
 * Tokenised by splitting on spaces.
 
-At first, I wasn’t sure whether sentence boundaries mattered for Word2Vec. Turns out, they don’t—what really matters is the order of words.
+At first, I wasn’t sure whether sentence boundaries mattered for Word2Vec. Turns out, they don’t; what really matters is the order of words.
 
 
 ### 2. Building the Vocabulary
