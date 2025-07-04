@@ -1,102 +1,97 @@
-# my-word2vec Project Progress: Word2Vec from Scratch (Skip-gram + Negative Sampling)
+# Word2Vec from Scratch (Skip-gram + Negative Sampling)
 
-#### **1. Dataset Preparation**
+## Why This Project
 
-* Used a **movie plot dataset** (combining all plots).
-* **Preprocessing Steps:**
-
-  * Lowercased all text.
-  * Removed punctuation using `.isalpha()`.
-  * Tokenised by splitting words.
-* **Problem:** Unsure if sentence boundaries mattered.
-
-  * **Solved:** Found that in Word2Vec, **order of words matters**, but not sentence boundaries.
+I wanted to really understand how **Word2Vec** works under the hood, so I decided to implement it from scratch using PyTorch. Instead of using standard datasets like Text8, I went with a movie plot dataset because it felt more interesting and unpredictable. The goal here wasn’t just to make it work but to understand every part of the process.
 
 ---
 
-#### **2. Vocabulary Building**
+## What I Did and Learned
 
-* Built a vocabulary dictionary (`word2idx`) by assigning a unique index to each word.
-* Created `idx2word` for reverse lookup.
-* Counted word frequencies.
-* **Problem:** Model threw an **index out of range** error during training.
+### 1. Dataset Preparation
 
-  * **Root Cause:** Indexing started from 1 instead of 0, making indices exceed vocab size.
-  * **Solved:** Fixed by starting indexing from 0 (`count_idx = 0`).
+I combined all the movie plots into one large text. For preprocessing, I:
 
----
+* Lowercased everything.
+* Removed punctuation by keeping only words made up of letters (`.isalpha()`).
+* Tokenised by splitting on spaces.
 
-#### **3. Training Pair Generation (Skip-gram)**
-
-* Generated `(centre, context)` pairs using a sliding window approach.
-* **Window Size:** 2.
-* **Problem:** Very large number of training pairs → long processing time.
-
-  * **Solution:** Started with a smaller dataset for debugging.
+At first, I wasn’t sure whether sentence boundaries mattered for Word2Vec. Turns out, they don’t—what really matters is the order of words.
 
 ---
 
-#### **4. Negative Sampling**
+### 2. Building the Vocabulary
 
-* Implemented `prepare_batch_with_negatives()`:
+I created a mapping from words to indices (`word2idx`) and another for reverse lookup (`idx2word`). I also counted word frequencies.
 
-  * For every positive pair, added 5 negative samples (`k = 5`).
-* **Problem:** Index out of range again during training.
-
-  * **Solved:** Added `assert` checks for indices.
-  * Root Cause: Indexing issue traced back to incorrect vocab indexing (fixed already).
+I ran into an index out-of-range error during training. After some digging, I realised it was because I started indexing from 1 instead of 0. Fixing that solved the problem.
 
 ---
 
-#### **5. Model Building (PyTorch)**
+### 3. Generating Training Pairs (Skip-gram)
 
-* Defined `Word2Vec` class with:
+I used a sliding window approach (window size = 2) to generate centre-context word pairs.
 
-  * Input embedding matrix.
-  * Output embedding matrix.
-* Forward pass:
-
-  * Looked up embeddings for centre & context.
-  * Computed **dot product** (summed over embedding dimensions).
-* **Problem:** Unsure why the dot product involves summing.
-
-  * **Solved:** Learned that sum along `dim=1` computes dot product across embedding dimensions.
+One problem here was that the number of pairs got really large, and it slowed things down a lot. To manage that, I started with a smaller subset of the dataset to debug and test things before scaling up.
 
 ---
 
-#### **6. Training Loop**
+### 4. Negative Sampling
 
-* Trained using:
+I wrote a function to prepare batches with negative samples. For each positive pair, I added 5 negative samples.
 
-  * **BCELoss**.
-  * **SGD optimiser** (learning rate `0.01`).
-  * Batch size: 100.
-  * 5 → then 25 epochs.
-* **Problem:** Loss fluctuated and was slow to reduce.
-
-  * **Solution:** Found that loss decrease in Word2Vec can be slow; what matters more is embedding quality, not just loss.
+I hit another index error during training. After adding some `assert` checks, I traced it back to my earlier indexing mistake. Once that was fixed, this part worked fine.
 
 ---
 
-#### **7. Debugging Loss Tracking**
+### 5. Model Building (PyTorch)
 
-* Fixed tracking of **average loss per epoch**:
+I built a simple Word2Vec model with:
 
-  * Reset `total_loss` at the start of each epoch.
-  * Averaged by dividing by the number of batches.
-* **Problem:** Mistakenly didn't reset total loss per epoch at first.
+* An input embedding matrix.
+* An output embedding matrix.
 
-  * **Solved:** Fixed by resetting at the start of each epoch.
+The forward pass:
+
+* Looks up the embeddings for centre and context words.
+* Computes the dot product between them by summing over the embedding dimensions.
+
+At first, I wasn’t sure why summing was needed, but I learned that this is how the dot product works across embeddings.
+
+---
+
+### 6. Training the Model
+
+I trained the model using:
+
+* Binary cross-entropy loss (BCELoss).
+* SGD optimiser with a learning rate of 0.01.
+* Batch size of 100.
+* Initially, 5 epochs, then I increased it to 25 and more.
+
+The loss didn’t always go down smoothly. I learned that in Word2Vec, what matters more is the quality of the embeddings rather than just how low the loss gets.
 
 ---
 
-#### **8. Started Hyperparameter Tuning**
+### 7. Tracking Loss Properly
 
-* Experimented with:
-  
-  * Number of negative samples (k)
-  * Learning rate
-  * Number of training epochs
-* Kept track of loss values to monitor training behaviour.
+I also fixed how I tracked loss. Initially, I wasn’t resetting the total loss at the start of each epoch, which made the numbers confusing. Once I fixed that, I could properly see the average loss per epoch.
 
 ---
+
+### 8. Hyperparameter Experiments
+
+Lately, I’ve been experimenting with:
+
+* Different numbers of negative samples (`k`).
+* Learning rates.
+* Different numbers of epochs.
+
+I’ve been tracking how these changes affect the loss and training behaviour.
+
+---
+
+## Why I’m Sharing This
+
+This project has been a hands-on way for me to learn not just Word2Vec, but also debugging, model building, and training workflows in PyTorch. I’m sharing it here to document my process, and maybe it’ll be useful for others who are also trying to learn by building things from scratch.
+
