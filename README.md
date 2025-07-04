@@ -20,7 +20,6 @@ I combined all the movie plots into one large text. For preprocessing, I:
 
 At first, I wasn’t sure whether sentence boundaries mattered for Word2Vec. Turns out, they don’t—what really matters is the order of words.
 
----
 
 ### 2. Building the Vocabulary
 
@@ -28,7 +27,6 @@ I created a mapping from words to indices (`word2idx`) and another for reverse l
 
 I ran into an index out-of-range error during training. After some digging, I realised it was because I started indexing from 1 instead of 0. Fixing that solved the problem.
 
----
 
 ### 3. Generating Training Pairs (Skip-gram)
 
@@ -36,7 +34,6 @@ I used a sliding window approach (window size = 2) to generate centre-context wo
 
 One problem here was that the number of pairs got really large, and it slowed things down a lot. To manage that, I started with a smaller subset of the dataset to debug and test things before scaling up.
 
----
 
 ### 4. Negative Sampling
 
@@ -44,7 +41,6 @@ I wrote a function to prepare batches with negative samples. For each positive p
 
 I hit another index error during training. After adding some `assert` checks, I traced it back to my earlier indexing mistake. Once that was fixed, this part worked fine.
 
----
 
 ### 5. Model Building (PyTorch)
 
@@ -60,7 +56,6 @@ The forward pass:
 
 At first, I wasn’t sure why summing was needed, but I learned that this is how the dot product works across embeddings.
 
----
 
 ### 6. Training the Model
 
@@ -73,13 +68,11 @@ I trained the model using:
 
 The loss didn’t always go down smoothly. I learned that in Word2Vec, what matters more is the quality of the embeddings rather than just how low the loss gets.
 
----
 
 ### 7. Tracking Loss Properly
 
 I also fixed how I tracked loss. Initially, I wasn’t resetting the total loss at the start of each epoch, which made the numbers confusing. Once I fixed that, I could properly see the average loss per epoch.
 
----
 
 ### 8. Hyperparameter Experiments
 
